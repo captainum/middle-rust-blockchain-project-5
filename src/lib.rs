@@ -17,27 +17,48 @@ pub fn sum_even(values: &[i64]) -> Option<i64> {
 
 /// Подсчёт ненулевых байтов. Буфер намеренно не освобождается,
 /// что приведёт к утечке памяти (Valgrind это покажет).
+///
+/// Miri обнаружил ошибку
+///
+/// error: memory leaked: alloc45772 (Rust heap, size: 5, align: 1), allocated here:
+//    --> /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/raw_vec/mod.rs:464:41
+//     |
+// 464 |             AllocInit::Uninitialized => alloc.allocate(layout),
+//     |                                         ^^^^^^^^^^^^^^^^^^^^^^
+//     |
+//     = note: stack backtrace:
+//             0: alloc::raw_vec::RawVecInner::try_allocate_in
+//                 at /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/raw_vec/mod.rs:464:41: 464:63
+//             1: alloc::raw_vec::RawVecInner::with_capacity_in
+//                 at /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/raw_vec/mod.rs:433:15: 433:92
+//             2: alloc::raw_vec::RawVec::<u8>::with_capacity_in
+//                 at /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/raw_vec/mod.rs:177:20: 177:77
+//             3: std::vec::Vec::<u8>::with_capacity_in
+//                 at /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/vec/mod.rs:965:20: 965:61
+//             4: <u8 as std::slice::<impl [T]>::to_vec_in::ConvertVec>::to_vec::<std::alloc::Global>
+//                 at /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/slice.rs:448:29: 448:62
+//             5: std::slice::<impl [u8]>::to_vec_in::<std::alloc::Global>
+//                 at /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/slice.rs:400:16: 400:38
+//             6: std::slice::<impl [u8]>::to_vec
+//                 at /Users/davasilchenko/.rustup/toolchains/nightly-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/slice.rs:376:9: 376:31
+//             7: broken_app::leak_buffer
+//                 at src/lib.rs:23:17: 23:31
+//             8: counts_non_zero_bytes
+//                 at tests/integration.rs:25:16: 25:34
+//             9: counts_non_zero_bytes::{closure#0}
+//                 at tests/integration.rs:23:27: 23:27
+///
+/// Убрано взаимодействие с сырой памятью.
 pub fn leak_buffer(input: &[u8]) -> usize {
-    let boxed = input.to_vec().into_boxed_slice();
-    let len = input.len();
-    let raw = Box::into_raw(boxed) as *mut u8;
-
-    let mut count = 0;
-    unsafe {
-        for i in 0..len {
-            if *raw.add(i) != 0_u8 {
-                count += 1;
-            }
-        }
-        // утечка: не вызываем Box::from_raw(raw);
-    }
-    count
+    input.iter().filter(|&&x| x != 0_u8).count()
 }
 
 /// Небрежная нормализация строки: удаляем пробелы и приводим к нижнему регистру,
 /// но игнорируем повторяющиеся пробелы/табуляции внутри текста.
+///
+/// Добавлен учет прочих возможных разделителей строк, помимо пробелов.
 pub fn normalize(input: &str) -> String {
-    input.replace(' ', "").to_lowercase()
+    input.split_whitespace().collect::<String>().to_lowercase()
 }
 
 /// Логическая ошибка: усредняет по всем элементам, хотя требуется учитывать

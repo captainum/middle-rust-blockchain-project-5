@@ -23,6 +23,12 @@ fn sums_even_numbers() {
 fn counts_non_zero_bytes() {
     let data = [0_u8, 1, 0, 2, 3];
     assert_eq!(leak_buffer(&data), 3);
+
+    let data = [];
+    assert_eq!(leak_buffer(&data), 0);
+
+    let data = [0, 0, 0, 0];
+    assert_eq!(leak_buffer(&data), 0);
 }
 
 #[test]
@@ -39,6 +45,7 @@ fn fib_small_numbers() {
 #[test]
 fn normalize_simple() {
     assert_eq!(normalize(" Hello World "), "helloworld");
+    assert_eq!(normalize(" Mary   had\ta\u{2009}little  \n\t lamb"), "maryhadalittlelamb");
 }
 
 #[test]
