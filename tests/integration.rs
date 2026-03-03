@@ -67,3 +67,11 @@ fn averages_only_positive() {
 fn test_use_after_free() {
     assert_eq!(use_after_free(), 84);
 }
+
+#[test]
+fn multi_thread_race_increment() {
+    let threads = 4;
+    let iterations = 1000;
+    let result = broken_app::concurrency::race_increment(iterations, threads);
+    assert_eq!(result, 4000);
+}
