@@ -33,13 +33,36 @@ fn counts_non_zero_bytes() {
 
 #[test]
 fn dedup_preserves_uniques() {
-    let uniq = algo::slow_dedup(&[5, 5, 1, 2, 2, 3]);
-    assert_eq!(uniq, vec![1, 2, 3, 5]); // порядок и состав важны
+    // Пустой срез — пустой результат.
+    assert_eq!(algo::slow_dedup(&[]), Vec::<u64>::new());
+
+    // Один элемент — возвращается как есть.
+    assert_eq!(algo::slow_dedup(&[42]), vec![42]);
+
+    // Уже уникальные элементы — сортировка без потерь.
+    assert_eq!(algo::slow_dedup(&[3, 1, 2]), vec![1, 2, 3]);
+
+    // Все элементы одинаковые — остаётся один.
+    assert_eq!(algo::slow_dedup(&[7, 7, 7]), vec![7]);
+
+    // Дубликаты удалены, результат отсортирован.
+    assert_eq!(algo::slow_dedup(&[5, 5, 1, 2, 2, 3]), vec![1, 2, 3, 5]);
 }
 
 #[test]
 fn fib_small_numbers() {
-    assert_eq!(algo::slow_fib(10), 55);
+    // Базовые случаи рекурсии.
+    assert_eq!(algo::slow_fib(0), Some(0));
+    assert_eq!(algo::slow_fib(1), Some(1));
+
+    // Произвольное значение из середины.
+    assert_eq!(algo::slow_fib(10), Some(55));
+
+    // Последнее значение, умещающееся в u64.
+    assert_eq!(algo::slow_fib(92), Some(7540113804746346429));
+
+    // fib(93) переполняет u64 — ожидаем None.
+    assert_eq!(algo::slow_fib(93), None);
 }
 
 #[test]

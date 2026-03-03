@@ -11,7 +11,7 @@ fn main() {
     println!("normalize: {}", normalize(text));
 
     let fib = algo::slow_fib(20);
-    println!("fib(20): {}", fib);
+    println!("fib(20): {:?}", fib);
 
     let uniq = algo::slow_dedup(&[1, 2, 2, 3, 1, 4, 4]);
     println!("dedup: {:?}", uniq);
