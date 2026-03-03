@@ -4,15 +4,19 @@ use broken_app::{algo, leak_buffer, normalize, sum_even};
 fn sums_even_numbers() {
     let nums = [1, 2, 3, 4];
     // Ожидаем корректное суммирование: 2 + 4 = 6.
-    assert_eq!(sum_even(&nums), 6);
-    
+    assert_eq!(sum_even(&nums), Some(6));
+
     let nums = [];
     // Проверка передачи пустого массива.
-    assert_eq!(sum_even(&nums), 0);
-    
+    assert_eq!(sum_even(&nums), Some(0));
+
     let nums = [1, 3, 5];
     // Проверка передачи массива без четных значений.
-    assert_eq!(sum_even(&nums), 0);
+    assert_eq!(sum_even(&nums), Some(0));
+
+    let nums = [i64::MAX - 1, i64::MAX - 1];
+    // Проверка учета переполнения
+    assert_eq!(sum_even(&nums), None);
 }
 
 #[test]
@@ -40,6 +44,14 @@ fn normalize_simple() {
 #[test]
 fn averages_only_positive() {
     let nums = [-5, 5, 15];
-    // Ожидается (5 + 15) / 2 = 10, но текущая реализация делит на все элементы.
-    assert!((broken_app::average_positive(&nums) - 10.0).abs() < f64::EPSILON);
+    assert!((broken_app::average_positive(&nums).unwrap() - 10.0).abs() < f64::EPSILON);
+
+    let nums = [];
+    assert_eq!(broken_app::average_positive(&nums), Some(0.0));
+
+    let nums = [-5, -5, -15];
+    assert_eq!(broken_app::average_positive(&nums), Some(0.0));
+
+    let nums = [i64::MAX, i64::MAX];
+    assert_eq!(broken_app::average_positive(&nums), None);
 }

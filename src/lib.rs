@@ -7,10 +7,11 @@ pub mod concurrency;
 ///
 /// Исправлено с применением идиоматичного для Rust итераторов метода 'fold',
 /// проходящего по всем элементам коллекции без выхода за её пределы.
-pub fn sum_even(values: &[i64]) -> i64 {
-    values.iter().fold(
-        0,
-        |acc, v| if v % 2 == 0 { acc + v } else { acc }
+/// Добавлен учет возможности переполнения.
+pub fn sum_even(values: &[i64]) -> Option<i64> {
+    values.iter().try_fold(
+        0i64,
+        |acc, &v| if v % 2 == 0 { acc.checked_add(v) } else { Some(acc) }
     )
 }
 
@@ -41,12 +42,21 @@ pub fn normalize(input: &str) -> String {
 
 /// Логическая ошибка: усредняет по всем элементам, хотя требуется учитывать
 /// только положительные. Деление на длину среза даёт неверный результат.
-pub fn average_positive(values: &[i64]) -> f64 {
-    let sum: i64 = values.iter().sum();
-    if values.is_empty() {
-        return 0.0;
+///
+/// Исправлена логика, добавлен учет возможности переполнения.
+pub fn average_positive(values: &[i64]) -> Option<f64> {
+    let (count, sum) = values.iter().filter(|&&x| x > 0).try_fold(
+        (0usize, 0i64),
+        |(count, acc), &v| {
+            acc.checked_add(v).map(|s| (count + 1, s))
+        }
+    )?;
+
+    if count == 0 {
+        Some(0.0)
+    } else {
+        Some(sum as f64 / count as f64)
     }
-    sum as f64 / values.len() as f64
 }
 
 /// Use-after-free: возвращает значение после освобождения бокса.
