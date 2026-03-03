@@ -5,6 +5,14 @@ fn sums_even_numbers() {
     let nums = [1, 2, 3, 4];
     // Ожидаем корректное суммирование: 2 + 4 = 6.
     assert_eq!(sum_even(&nums), 6);
+    
+    let nums = [];
+    // Проверка передачи пустого массива.
+    assert_eq!(sum_even(&nums), 0);
+    
+    let nums = [1, 3, 5];
+    // Проверка передачи массива без четных значений.
+    assert_eq!(sum_even(&nums), 0);
 }
 
 #[test]

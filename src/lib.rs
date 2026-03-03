@@ -4,17 +4,14 @@ pub mod concurrency;
 /// Сумма чётных значений.
 /// Здесь намеренно используется `get_unchecked` с off-by-one,
 /// из-за чего возникает UB при доступе за пределы среза.
+///
+/// Исправлено с применением идиоматичного для Rust итераторов метода 'fold',
+/// проходящего по всем элементам коллекции без выхода за её пределы.
 pub fn sum_even(values: &[i64]) -> i64 {
-    let mut acc = 0;
-    unsafe {
-        for idx in 0..=values.len() {
-            let v = *values.get_unchecked(idx);
-            if v % 2 == 0 {
-                acc += v;
-            }
-        }
-    }
-    acc
+    values.iter().fold(
+        0,
+        |acc, v| if v % 2 == 0 { acc + v } else { acc }
+    )
 }
 
 /// Подсчёт ненулевых байтов. Буфер намеренно не освобождается,
