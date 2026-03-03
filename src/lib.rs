@@ -61,10 +61,26 @@ pub fn average_positive(values: &[i64]) -> Option<f64> {
 
 /// Use-after-free: возвращает значение после освобождения бокса.
 /// UB, проявится под ASan/Miri.
-pub unsafe fn use_after_free() -> i32 {
+///
+/// UB проявился при добавлении теста на функцию:
+/// test test_use_after_free ... error: Undefined Behavior: memory access failed: alloc75034 has been freed, so this pointer is dangling
+//   --> src/lib.rs:69:11
+//    |
+// 69 |     val + *raw
+//    |           ^^^^ Undefined Behavior occurred here
+//    |
+///
+/// Оставил демонстрацию работы с сырой памятью, но убрал use after free ошибку.
+/// Также внешний интерфейс перестал быть unsafe.
+pub fn use_after_free() -> i32 {
     let b = Box::new(42_i32);
     let raw = Box::into_raw(b);
-    let val = *raw;
-    drop(Box::from_raw(raw));
-    val + *raw
+
+    unsafe {
+        let mut val = *raw;
+        val += *raw;
+        drop(Box::from_raw(raw));
+
+        val
+    }
 }

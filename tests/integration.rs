@@ -1,4 +1,4 @@
-use broken_app::{algo, leak_buffer, normalize, sum_even};
+use broken_app::{algo, leak_buffer, normalize, sum_even, use_after_free};
 
 #[test]
 fn sums_even_numbers() {
@@ -54,4 +54,9 @@ fn averages_only_positive() {
 
     let nums = [i64::MAX, i64::MAX];
     assert_eq!(broken_app::average_positive(&nums), None);
+}
+
+#[test]
+fn test_use_after_free() {
+    assert_eq!(use_after_free(), 84);
 }
