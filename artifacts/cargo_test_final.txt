@@ -1,0 +1,33 @@
+Compiling broken-app v0.1.0 (/Users/davasilchenko/middle-rust-blockchain/broken-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.97s
+     Running unittests src/lib.rs (target/debug/deps/broken_app-83feadab0b5af479)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/demo.rs (target/debug/deps/demo-0a539b7467aef294)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (target/debug/deps/integration-5a2852a7614ab773)
+
+running 8 tests
+test averages_only_positive ... ok
+test dedup_preserves_uniques ... ok
+test counts_non_zero_bytes ... ok
+test normalize_simple ... ok
+test test_use_after_free ... ok
+test sums_even_numbers ... ok
+test fib_small_numbers ... ok
+test multi_thread_race_increment ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests broken_app
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

@@ -1,0 +1,33 @@
+RUSTFLAGS="-Zsanitizer=address" cargo +nightly test -Zbuild-std
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src/lib.rs (target/debug/deps/broken_app-c80e25e52ce64053)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/demo.rs (target/debug/deps/demo-285bfb42ee6fb865)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (target/debug/deps/integration-6487626ff5223251)
+
+running 8 tests
+test counts_non_zero_bytes ... ok
+test averages_only_positive ... ok
+test dedup_preserves_uniques ... ok
+test fib_small_numbers ... ok
+test normalize_simple ... ok
+test sums_even_numbers ... ok
+test multi_thread_race_increment ... ok
+test test_use_after_free ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests broken_app
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

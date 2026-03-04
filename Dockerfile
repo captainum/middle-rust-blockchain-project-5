@@ -9,6 +9,11 @@ WORKDIR /app
 
 COPY Cargo.toml Cargo.lock ./
 
-COPY . .
+COPY src ./src
+COPY tests ./tests
+COPY benches ./benches
 
-CMD ["valgrind", "--leak-check=full", "cargo", "test", "--tests"]
+COPY entrypoint.sh ./entrypoint.sh
+
+RUN chmod +x ./entrypoint.sh
+CMD ["sh", "./entrypoint.sh"]

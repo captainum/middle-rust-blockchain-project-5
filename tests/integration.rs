@@ -68,7 +68,10 @@ fn fib_small_numbers() {
 #[test]
 fn normalize_simple() {
     assert_eq!(normalize(" Hello World "), "helloworld");
-    assert_eq!(normalize(" Mary   had\ta\u{2009}little  \n\t lamb"), "maryhadalittlelamb");
+    assert_eq!(
+        normalize(" Mary   had\ta\u{2009}little  \n\t lamb"),
+        "maryhadalittlelamb"
+    );
 }
 
 #[test]

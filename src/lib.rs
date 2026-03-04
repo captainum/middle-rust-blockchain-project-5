@@ -9,10 +9,13 @@ pub mod concurrency;
 /// проходящего по всем элементам коллекции без выхода за её пределы.
 /// Добавлен учет возможности переполнения.
 pub fn sum_even(values: &[i64]) -> Option<i64> {
-    values.iter().try_fold(
-        0i64,
-        |acc, &v| if v % 2 == 0 { acc.checked_add(v) } else { Some(acc) }
-    )
+    values.iter().try_fold(0i64, |acc, &v| {
+        if v % 2 == 0 {
+            acc.checked_add(v)
+        } else {
+            Some(acc)
+        }
+    })
 }
 
 /// Подсчёт ненулевых байтов. Буфер намеренно не освобождается,
@@ -66,12 +69,12 @@ pub fn normalize(input: &str) -> String {
 ///
 /// Исправлена логика, добавлен учет возможности переполнения.
 pub fn average_positive(values: &[i64]) -> Option<f64> {
-    let (count, sum) = values.iter().filter(|&&x| x > 0).try_fold(
-        (0usize, 0i64),
-        |(count, acc), &v| {
+    let (count, sum) = values
+        .iter()
+        .filter(|&&x| x > 0)
+        .try_fold((0usize, 0i64), |(count, acc), &v| {
             acc.checked_add(v).map(|s| (count + 1, s))
-        }
-    )?;
+        })?;
 
     if count == 0 {
         Some(0.0)
